@@ -9,16 +9,15 @@
 import Foundation
 import CoreData
 
-struct DataStore {
+class DataStore {
     
-
     static let sharedDataStore =  DataStore()
     var messages: [Message] = []
-    
+    private init() {}
     
     // MARK: - Core Data Saving support
     
-    mutating func saveContext () {
+    func saveContext () {
         if managedObjectContext.hasChanges {
             do {
                 try managedObjectContext.save()
@@ -32,28 +31,28 @@ struct DataStore {
         }
     }
     
-        mutating func fetchData ()
-        {
-//         perform a fetch request to fill an array property on your datastore
+    func fetchData ()
+    {
+        //         perform a fetch request to fill an array property on your datastore
+        
+        // Initialize Fetch Request
+        let fetchRequest = NSFetchRequest()
+        
+        // Create Entity Description
+        let entityDescription = NSEntityDescription.entityForName("Message", inManagedObjectContext: managedObjectContext)
+        
+        // Configure Fetch Request
+        fetchRequest.entity = entityDescription
+        
+        do {
+            messages = try self.managedObjectContext.executeFetchRequest(fetchRequest) as! [Message]
             
-            // Initialize Fetch Request
-            let fetchRequest = NSFetchRequest()
-            
-            // Create Entity Description
-            let entityDescription = NSEntityDescription.entityForName("Message", inManagedObjectContext: managedObjectContext) 
-            
-            // Configure Fetch Request
-            fetchRequest.entity = entityDescription
-            
-            do {
-                messages = try self.managedObjectContext.executeFetchRequest(fetchRequest) as! [Message]
-                
-            } catch {
-                let fetchError = error as NSError
-                print(fetchError)
-            }
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
         }
-
+    }
+    
     // MARK: - Core Data stack
     // Managed Object Context property getter. This is where we've dropped our "boilerplate" code.
     // If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.

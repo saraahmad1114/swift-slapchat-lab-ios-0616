@@ -13,7 +13,7 @@ class TableViewController: UITableViewController {
     
     
     var localMessages = [Message]()
-    var store = DataStore.sharedDataStore
+    let store = DataStore.sharedDataStore
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +23,8 @@ class TableViewController: UITableViewController {
         if self.localMessages.isEmpty {
             generateTestData()
             self.localMessages = store.messages
+        } else {
+            print("local message is NOT empty")
         }
         
         
@@ -34,11 +36,13 @@ class TableViewController: UITableViewController {
         
     }
     
-    func viewWillAppear() {
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
         store.fetchData()
         self.localMessages = store.messages
         self.tableView.reloadData()
-    
+        
     }
     
     func generateTestData()
